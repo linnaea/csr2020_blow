@@ -60,13 +60,16 @@ and can be used as the oracle.
 
 Let `P_i = i * g_f` for each `i` in `[1...f-1]`.
 
-In ECDH only the `x` coordinate is used as the shared secret, and for each `x` there are 
-usually 2 solutions to the curve equation(`+y` and `-y`), therefore if the server returns
-a success to our guess `P_i`, we only know that either `d = i mod f` or `d = -i mod f`.
+Per EC point addition rules(and because it's a cyclic group) we can show that `-P_i = P_(-i)`.
 
-However, no matter which case is true, `d^2 = i^2 mod f` will always hold.
+In ECDH-ES only the `x` coordinate is used as the shared secret, and for each `x` there are 
+usually 2 solutions to the curve equation(`+y` and `-y`, which with `x` forms `P` and `-P`),
+therefore if the server returns a success to our guess `P_i`, we only know that either
+`d = i mod f` or `d = -i mod f`.
 
-Trying all different combinations is not a viable solution as it would either require 2^44
+No matter which case is true, `d^2 = i^2 mod f` will always hold.
+
+Trying all different combinations is not a viable solution as it would require 2^44
 tries for the minimum 3831 queries (or 2^20 tries for 198k queries).
 
 Going for `d^2` does require more leaks from the server however, 13490 queries will be needed.
@@ -87,7 +90,8 @@ For each pair of `f` and `g_f`:
         which cannot be serialized to produce a shared secret
    3. Record the factor `f` and the corresponding remainder `i^2`(not `i`)
 
-Note: Only half of the range needs to be checked as the other half are just `-i`s.
+Note: Only half of the range needs to be checked as the other half are just `-i`s, which as discussed
+      earlier cannot be distinguished from `+i` with an ECDH-ES oracle.
 
 Once there are enough residues collected `reduce(lambda x, y: x*y, factors) >= secp256r1.n ** 2`:
    1. Compute `d^2` using the [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
