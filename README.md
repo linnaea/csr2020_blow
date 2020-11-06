@@ -1,4 +1,6 @@
 # csr.de 2020 `blow`
+a.k.a. reason #10007 why you should not roll you own crypto.
+
 ## 0. TL;DR:
 [Invalid curve attack](https://link.springer.com/chapter/10.1007/978-3-319-24174-6_21)
 
